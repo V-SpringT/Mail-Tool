@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Tool gửi email hàng loạt với template và tham số động. Hỗ trợ Excel, CSV, Gmail SMTP.">
+  <title>Bulk Email Sender — Gửi Email Hàng Loạt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Background effects -->
+  <div class="bg-effects">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+  </div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Bulk Email Sender</h1>
+          <p class="logo-subtitle">Gửi email hàng loạt với tham số động</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Step Progress Bar -->
+    <div class="stepper">
+      <div class="step active" data-step="1">
+        <div class="step-circle">
+          <span class="step-number">1</span>
+          <svg class="step-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <span class="step-label">Cấu hình SMTP</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" data-step="2">
+        <div class="step-circle">
+          <span class="step-number">2</span>
+          <svg class="step-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <span class="step-label">Upload danh sách</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" data-step="3">
+        <div class="step-circle">
+          <span class="step-number">3</span>
+          <svg class="step-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <span class="step-label">Soạn email</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" data-step="4">
+        <div class="step-circle">
+          <span class="step-number">4</span>
+          <svg class="step-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <span class="step-label">Gửi & Kết quả</span>
+      </div>
+    </div>
+
+    <!-- Step Panels -->
+    <main class="step-panels">
+
+      <!-- ========== STEP 1: SMTP Config ========== -->
+      <section class="panel active" id="panel-1">
+        <div class="panel-card">
+          <div class="panel-header">
+            <div class="panel-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="m7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <div>
+              <h2>Cấu hình Gmail SMTP</h2>
+              <p>Nhập thông tin tài khoản Gmail và App Password để gửi email</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="smtp-email">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="label-icon">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              Địa chỉ Gmail
+            </label>
+            <input type="email" id="smtp-email" placeholder="yourname@gmail.com" autocomplete="email">
+          </div>
+
+          <div class="form-group">
+            <label for="smtp-password">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="label-icon">
+                <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+              </svg>
+              App Password
+            </label>
+            <input type="password" id="smtp-password" placeholder="Nhập App Password 16 ký tự" autocomplete="current-password">
+            <small class="help-text">
+              <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener">Tạo App Password tại đây ↗</a>
+              — Cần bật xác minh 2 bước trước
+            </small>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-secondary" id="btn-test-connection">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              Test kết nối
+            </button>
+            <button class="btn btn-primary" id="btn-next-1" disabled>
+              Tiếp theo
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </button>
+          </div>
+
+          <div id="connection-status" class="status-box hidden"></div>
+        </div>
+      </section>
+
+      <!-- ========== STEP 2: Upload File ========== -->
+      <section class="panel" id="panel-2">
+        <div class="panel-card">
+          <div class="panel-header">
+            <div class="panel-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="12" y1="18" x2="12" y2="12"/>
+                <polyline points="9 15 12 12 15 15"/>
+              </svg>
+            </div>
+            <div>
+              <h2>Upload danh sách người nhận</h2>
+              <p>Kéo thả file Excel (.xlsx) hoặc CSV vào đây</p>
+            </div>
+          </div>
+
+          <!-- Drop zone -->
+          <div class="drop-zone" id="drop-zone">
+            <div class="drop-zone-content">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="drop-icon">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <p class="drop-text">Kéo & thả file vào đây</p>
+              <p class="drop-subtext">hoặc</p>
+              <label class="btn btn-outline" for="file-input">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                Chọn file
+              </label>
+              <input type="file" id="file-input" accept=".xlsx,.xls,.csv" hidden>
+              <p class="drop-formats">Hỗ trợ: .xlsx, .xls, .csv</p>
+            </div>
+          </div>
+
+          <!-- File info -->
+          <div id="file-info" class="file-info hidden">
+            <div class="file-info-header">
+              <div class="file-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                <span id="file-name"></span>
+              </div>
+              <div class="file-stats">
+                <span class="stat"><strong id="row-count">0</strong> người nhận</span>
+                <span class="stat"><strong id="col-count">0</strong> cột dữ liệu</span>
+              </div>
+            </div>
+
+            <div id="invalid-warning" class="alert-warning hidden">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              <span></span>
+            </div>
+
+            <!-- Data preview table -->
+            <div class="table-wrapper">
+              <table id="data-preview-table">
+                <thead><tr id="table-header"></tr></thead>
+                <tbody id="table-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-ghost" id="btn-prev-2">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12"/>
+                <polyline points="12 19 5 12 12 5"/>
+              </svg>
+              Quay lại
+            </button>
+            <button class="btn btn-primary" id="btn-next-2" disabled>
+              Tiếp theo
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== STEP 3: Compose Email ========== -->
+      <section class="panel" id="panel-3">
+        <div class="panel-card">
+          <div class="panel-header">
+            <div class="panel-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </div>
+            <div>
+              <h2>Soạn email template</h2>
+              <p>Sử dụng <code>{{tên_cột}}</code> để chèn tham số động</p>
+            </div>
+          </div>
+
+          <div class="compose-layout">
+            <div class="compose-main">
+              <!-- Email type toggle -->
+              <div class="toggle-group">
+                <button class="toggle-btn active" id="toggle-text" data-type="text">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="4 7 4 4 20 4 20 7"/>
+                    <line x1="9" y1="20" x2="15" y2="20"/>
+                    <line x1="12" y1="4" x2="12" y2="20"/>
+                  </svg>
+                  Plain Text
+                </button>
+                <button class="toggle-btn" id="toggle-html" data-type="html">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="16 18 22 12 16 6"/>
+                    <polyline points="8 6 2 12 8 18"/>
+                  </svg>
+                  HTML
+                </button>
+              </div>
+
+              <!-- Subject -->
+              <div class="form-group">
+                <label for="email-subject">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="label-icon">
+                    <line x1="17" y1="10" x2="3" y2="10"/>
+                    <line x1="21" y1="6" x2="3" y2="6"/>
+                    <line x1="21" y1="14" x2="3" y2="14"/>
+                    <line x1="17" y1="18" x2="3" y2="18"/>
+                  </svg>
+                  Tiêu đề email (Subject)
+                </label>
+                <input type="text" id="email-subject" placeholder="Ví dụ: Thông báo cho {{Họ tên}} - Mã {{Mã số}}">
+              </div>
+
+              <!-- Body -->
+              <div class="form-group">
+                <label for="email-body">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="label-icon">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
+                  </svg>
+                  Nội dung email
+                </label>
+                <textarea id="email-body" rows="12" placeholder="Kính gửi {{Họ tên}},&#10;&#10;Chúng tôi xin thông báo...&#10;&#10;Mã số của bạn: {{Mã số}}&#10;Số tiền: {{Số tiền}}&#10;&#10;Trân trọng,&#10;[Tên bạn]"></textarea>
+              </div>
+            </div>
+
+            <!-- Variable sidebar -->
+            <div class="compose-sidebar">
+              <div class="sidebar-card">
+                <h3>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="16 18 22 12 16 6"/>
+                    <polyline points="8 6 2 12 8 18"/>
+                  </svg>
+                  Biến có sẵn
+                </h3>
+                <p class="sidebar-help">Click để chèn vào nội dung</p>
+                <div id="variable-list" class="variable-list">
+                  <!-- Filled by JS -->
+                </div>
+              </div>
+
+              <!-- Live Preview -->
+              <div class="sidebar-card">
+                <h3>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                  Xem trước
+                </h3>
+                <div class="preview-nav">
+                  <button class="btn btn-icon" id="preview-prev" title="Người trước">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                  </button>
+                  <span id="preview-index">1 / 1</span>
+                  <button class="btn btn-icon" id="preview-next" title="Người sau">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                </div>
+                <div id="preview-content" class="preview-content">
+                  <div class="preview-to"><strong>Đến:</strong> <span id="preview-to">—</span></div>
+                  <div class="preview-subject"><strong>Tiêu đề:</strong> <span id="preview-subject">—</span></div>
+                  <div class="preview-divider"></div>
+                  <div id="preview-body" class="preview-body">Nhập nội dung email để xem trước...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-ghost" id="btn-prev-3">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12"/>
+                <polyline points="12 19 5 12 12 5"/>
+              </svg>
+              Quay lại
+            </button>
+            <button class="btn btn-primary" id="btn-next-3" disabled>
+              Xem trước & Gửi
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== STEP 4: Send & Results ========== -->
+      <section class="panel" id="panel-4">
+        <div class="panel-card">
+          <div class="panel-header">
+            <div class="panel-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="22" y1="2" x2="11" y2="13"/>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+            </div>
+            <div>
+              <h2>Gửi email & theo dõi kết quả</h2>
+              <p>Kiểm tra lại thông tin và bắt đầu gửi</p>
+            </div>
+          </div>
+
+          <!-- Summary before send -->
+          <div id="send-summary" class="send-summary">
+            <div class="summary-grid">
+              <div class="summary-item">
+                <div class="summary-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="summary-label">Số người nhận</div>
+                  <div class="summary-value" id="summary-recipients">0</div>
+                </div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="summary-label">Từ</div>
+                  <div class="summary-value" id="summary-from">—</div>
+                </div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="summary-label">Thời gian ước tính</div>
+                  <div class="summary-value" id="summary-time">—</div>
+                </div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="17" y1="10" x2="3" y2="10"/>
+                    <line x1="21" y1="6" x2="3" y2="6"/>
+                    <line x1="21" y1="14" x2="3" y2="14"/>
+                    <line x1="17" y1="18" x2="3" y2="18"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="summary-label">Tiêu đề</div>
+                  <div class="summary-value summary-value-sm" id="summary-subject">—</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Delay setting -->
+            <div class="form-group delay-setting">
+              <label for="send-delay">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="label-icon">
+                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+                Delay giữa mỗi email (ms)
+              </label>
+              <input type="number" id="send-delay" value="1500" min="500" max="10000" step="100">
+              <small class="help-text">Khuyến nghị ≥ 1500ms để tránh bị Gmail đánh dấu spam</small>
+            </div>
+
+            <div class="btn-row center">
+              <button class="btn btn-ghost" id="btn-prev-4">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="19" y1="12" x2="5" y2="12"/>
+                  <polyline points="12 19 5 12 12 5"/>
+                </svg>
+                Quay lại
+              </button>
+              <button class="btn btn-send" id="btn-send">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="22" y1="2" x2="11" y2="13"/>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+                Bắt đầu gửi
+              </button>
+            </div>
+          </div>
+
+          <!-- Progress -->
+          <div id="send-progress" class="send-progress hidden">
+            <div class="progress-header">
+              <div class="progress-stats">
+                <span class="progress-sent">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span id="progress-success">0</span> thành công
+                </span>
+                <span class="progress-failed">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  <span id="progress-fail">0</span> thất bại
+                </span>
+                <span class="progress-remaining">
+                  <span id="progress-current">0</span> / <span id="progress-total">0</span>
+                </span>
+              </div>
+              <div class="progress-bar-wrapper">
+                <div class="progress-bar" id="progress-bar"></div>
+              </div>
+              <div class="progress-percent" id="progress-percent">0%</div>
+            </div>
+
+            <!-- Log -->
+            <div class="send-log" id="send-log">
+              <!-- Filled by JS -->
+            </div>
+          </div>
+
+          <!-- Result Summary -->
+          <div id="send-result" class="send-result hidden">
+            <div class="result-header">
+              <div class="result-icon" id="result-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+              </div>
+              <h3 id="result-title">Hoàn tất!</h3>
+              <p id="result-message"></p>
+            </div>
+            <div class="btn-row center">
+              <button class="btn btn-primary" id="btn-reset">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="1 4 1 10 7 10"/>
+                  <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                </svg>
+                Gửi đợt mới
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
