@@ -16,8 +16,12 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Multer config for file uploads
+// Use /tmp on Vercel (serverless), local uploads/ dir otherwise
+const isVercel = process.env.VERCEL === '1';
+const uploadsDir = isVercel ? '/tmp' : path.join(__dirname, 'uploads');
+
 const upload = multer({
-  dest: path.join(__dirname, 'uploads'),
+  dest: uploadsDir,
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
   fileFilter: (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
@@ -29,9 +33,8 @@ const upload = multer({
   }
 });
 
-// Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) {
+// Ensure uploads directory exists (local only)
+if (!isVercel && !fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
@@ -305,11 +308,17 @@ function replaceVariables(template, data) {
 // ============================================================
 // Start Server
 // ============================================================
-app.listen(PORT, () => {
-  console.log(`
+// Only start listening when running locally (not on Vercel)
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`
   ╔══════════════════════════════════════════╗
   ║   🚀 Bulk Email Sender đang chạy!       ║
   ║   📧 http://localhost:${PORT}              ║
   ╚══════════════════════════════════════════╝
-  `);
-});
+    `);
+  });
+}
+
+// Export for Vercel serverless
+module.exports = app;
