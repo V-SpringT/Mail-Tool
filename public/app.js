@@ -10,6 +10,7 @@
     currentStep: 1,
     smtpEmail: '',
     smtpPassword: '',
+    smtpName: '',
     smtpVerified: false,
     fileData: [],
     columns: [],
@@ -30,6 +31,7 @@
 
   // Step 1
   const smtpEmailInput = $('#smtp-email');
+  const smtpNameInput = $('#smtp-name');
   const smtpPasswordInput = $('#smtp-password');
   const btnTestConnection = $('#btn-test-connection');
   const btnNext1 = $('#btn-next-1');
@@ -149,6 +151,7 @@
         showStatus(connectionStatus, 'success', '✅ ' + data.message);
         state.smtpEmail = email;
         state.smtpPassword = password;
+        state.smtpName = smtpNameInput.value.trim();
         state.smtpVerified = true;
         btnNext1.disabled = false;
         showToast('success', 'Kết nối SMTP thành công!');
@@ -420,7 +423,8 @@
 
   function initSendSummary() {
     summaryRecipients.textContent = state.fileData.length;
-    summaryFrom.textContent = state.smtpEmail;
+    state.smtpName = smtpNameInput.value.trim();
+    summaryFrom.textContent = state.smtpName ? `${state.smtpName} <${state.smtpEmail}>` : state.smtpEmail;
     summarySubject.textContent = emailSubject.value;
 
     const delayVal = parseInt(sendDelay.value) || 1500;
@@ -480,6 +484,7 @@
         body: JSON.stringify({
           email: state.smtpEmail,
           password: state.smtpPassword,
+          senderName: state.smtpName,
           subject: emailSubject.value,
           body: emailBody.value,
           recipients: state.fileData,
@@ -596,6 +601,7 @@
 
     // Reset inputs
     smtpEmailInput.value = '';
+    smtpNameInput.value = '';
     smtpPasswordInput.value = '';
     emailSubject.value = '';
     emailBody.value = '';

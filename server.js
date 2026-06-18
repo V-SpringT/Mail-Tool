@@ -190,7 +190,7 @@ app.post('/api/preview', (req, res) => {
 // API: Send Bulk Emails (SSE Stream)
 // ============================================================
 app.post('/api/send', async (req, res) => {
-  const { email, password, subject, body, recipients, emailColumn, isHtml, delayMs } = req.body;
+  const { email, password, senderName, subject, body, recipients, emailColumn, isHtml, delayMs } = req.body;
 
   // Set up SSE
   res.setHeader('Content-Type', 'text/event-stream');
@@ -224,7 +224,7 @@ app.post('/api/send', async (req, res) => {
         const processedBody = replaceVariables(body, recipient);
 
         const mailOptions = {
-          from: email,
+          from: senderName ? `${senderName} <${email}>` : email,
           to: toEmail,
           subject: processedSubject,
         };
